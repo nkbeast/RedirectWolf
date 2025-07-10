@@ -15,7 +15,7 @@ CONFIG_PATH = os.path.expanduser("~/.config/redirectwolf/config.yaml")
 HEADERS = {
     "Tool-Name": TOOL_NAME,
     "Developed-by": "NK",
-    "Contact-us": "naveenbeastyt@gmail.com"
+    "Contact-us": "contact@nkbeast.com"
 }
 
 RED = '\x1b[31;1m'
@@ -110,12 +110,14 @@ def generate_html():
     print(f"{MAGENTA}[✓] HTML report saved: redirectwolf-report.html{RESET}")
 
 async def print_stats(total):
-    while scanned < total:
+    while True:
         async with counter_lock:
             done = scanned
             vuln = vulnerable
         sys.stdout.write(f"\r{BLUE}[🔄] Scanned: {done}/{total} | Found: {vuln}{RESET}")
         sys.stdout.flush()
+        if done >= total:
+            break
         await asyncio.sleep(0.5)
     print()
 
@@ -125,7 +127,7 @@ async def worker(queue, client, output, verbose, webhook, html_flag, total):
         try:
             base_url, payload = await queue.get()
         except asyncio.CancelledError:
-            break  # Exit cleanly if cancelled while waiting for task
+            break
 
         try:
             fullurl = f"{base_url.rstrip('/')}/{quote(payload)}"
@@ -134,9 +136,6 @@ async def worker(queue, client, output, verbose, webhook, html_flag, total):
                 status = res.status_code
                 location = res.headers.get("location", "")
                 domain = urlparse(location).netloc
-
-                async with counter_lock:
-                    scanned += 1
 
                 if status in [301, 302] and "evil.com" in domain:
                     async with counter_lock:
@@ -159,7 +158,10 @@ async def worker(queue, client, output, verbose, webhook, html_flag, total):
                 if verbose:
                     print(f"{RED}[x] Error:{RESET} {fullurl} [{e}]")
         finally:
+            async with counter_lock:
+                scanned += 1
             queue.task_done()
+
 async def run_scan(targets, payloads, output, verbose, webhook, rate, html_flag):
     queue = asyncio.Queue()
     async with httpx.AsyncClient() as client:
@@ -172,9 +174,16 @@ async def run_scan(targets, payloads, output, verbose, webhook, rate, html_flag)
         stats_task = asyncio.create_task(print_stats(total))
 
         await queue.join()
+
+        # Wait until scanned counter catches up
+        while True:
+            async with counter_lock:
+                if scanned >= total:
+                    break
+            await asyncio.sleep(0.1)
+
         for task in tasks:
             task.cancel()
-        await asyncio.sleep(0.1)
         stats_task.cancel()
 
 @click.command()
