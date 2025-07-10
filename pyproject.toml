@@ -1,0 +1,21 @@
+[project]
+name = "redirectwolf"
+version = "1.0.0"
+description = "Asynchronous Open Redirect Vulnerability Scanner"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+  { name="NK", email="naveenbeastyt@gmail.com" }
+]
+dependencies = [
+  "httpx>=0.24.0",
+  "click>=8.1",
+  "pyyaml>=6.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/nkbeast/RedirectWolf"
+Source = "https://github.com/nkbeast/RedirectWolf"
+[project.scripts]
+redirectwolf = "redirectwolf:main"
