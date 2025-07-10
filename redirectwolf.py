@@ -15,7 +15,7 @@ CONFIG_PATH = os.path.expanduser("~/.config/redirectwolf/config.yaml")
 HEADERS = {
     "Tool-Name": TOOL_NAME,
     "Developed-by": "NK",
-    "Contact-us": "contact@nkbeast.com"
+    "Contact-us": "naveenbeastyt@gmail.com"
 }
 
 RED = '\x1b[31;1m'
