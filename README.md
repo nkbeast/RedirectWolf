@@ -15,7 +15,7 @@
 
 ---
 
-![RedirectWolf Banner](https://raw.githubusercontent.com/nkbeast/RedirectWolf/main/assets/banner.gif)
+![RedirectWolf Banner](https://raw.githubusercontent.com/nkbeast/RedirectWolf/refs/heads/main/banner.png)
 
 ---
 
