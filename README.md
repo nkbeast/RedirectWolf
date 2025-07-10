@@ -50,3 +50,28 @@
 
 ```bash
 pip install redirectwolf
+```
+---
+
+# Usage
+
+```bash
+🔍 Scan a Single URL
+redirectwolf -u https://example.com
+
+📁 Bulk Scan from File
+redirectwolf -l urls.txt
+
+📝 Save Output to File
+redirectwolf -l urls.txt -o found.txt
+
+📄 Generate HTML Report
+redirectwolf -l urls.txt --html
+
+📢 Enable Verbose Output
+redirectwolf -l urls.txt -v
+
+🔔 Set Discord Webhook (Persistent)
+redirectwolf -w https://discord.com/api/webhooks/XXXX/XXXX
+
+```
