@@ -124,6 +124,10 @@ async def worker(queue, client, output, verbose, webhook, html_flag, total):
     while True:
         try:
             base_url, payload = await queue.get()
+        except asyncio.CancelledError:
+            break  # Exit cleanly if cancelled while waiting for task
+
+        try:
             fullurl = f"{base_url.rstrip('/')}/{quote(payload)}"
             try:
                 res = await client.get(fullurl, headers=HEADERS, follow_redirects=False, timeout=5)
@@ -156,7 +160,6 @@ async def worker(queue, client, output, verbose, webhook, html_flag, total):
                     print(f"{RED}[x] Error:{RESET} {fullurl} [{e}]")
         finally:
             queue.task_done()
-
 async def run_scan(targets, payloads, output, verbose, webhook, rate, html_flag):
     queue = asyncio.Queue()
     async with httpx.AsyncClient() as client:
